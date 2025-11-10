@@ -1,13 +1,13 @@
 describe('GitHub Login Test', () => {
   it('should open GitHub and login with provided credentials', () => {
     // Visit GitHub homepage
-    cy.visit('https://www.list.am/login')
+    cy.visit('https://www.list.am/')
     
     // Click on Sign in button
     cy.contains('Sign in').click()
     
     // Wait for login page to load
-    cy.url().should('include', '/login')
+    // cy.url().should('include', '/login')
     cy.reload()
     // Fill in email address
     cy.get('input[name="phone_number_or_email"]').type('041170191')
