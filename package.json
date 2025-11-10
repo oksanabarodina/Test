@@ -1,0 +1,18 @@
+{
+  "name": "browser-automation",
+  "version": "1.0.0",
+  "description": "Browser automation with Playwright",
+  "main": "browser.js",
+  "scripts": {
+    "start": "node browser.js",
+    "test": "node browser.js"
+  },
+  "keywords": ["browser", "automation", "playwright"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.40.0"
+  }
+}
+
+
