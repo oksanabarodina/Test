@@ -17,6 +17,8 @@ describe('GitHub Login Test', () => {
     if (!password) {
       throw new Error('USER_PASSWORD environment variable is not set')
     }
+    cy.get('input[name="password"]').click()
+
     cy.get('input[name="password"]').type(password, {force: true})
     
     // Click Sign in button
