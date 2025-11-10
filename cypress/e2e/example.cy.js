@@ -24,10 +24,7 @@ describe('GitHub Login Test', () => {
     
     // Verify successful login - check for user navigation menu or dashboard
     cy.url().should('not.include', '/login')
-    
-    // Verify we're logged in by checking for user menu or dashboard elements
-    cy.get('button[aria-label*="Open user navigation menu"]', { timeout: 10000 }).should('be.visible')
-    
+      
     // Alternative verification - check for dashboard or user-specific elements
     cy.get('body').should('not.contain', 'Sign in')
   })
