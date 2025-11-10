@@ -27,13 +27,46 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Create cypress.env.json
+      - name: Validate USER_PASSWORD secret
         run: |
-          echo '{
-            "USER_PASSWORD": "${{ secrets.USER_PASSWORD }}"
-          }' > cypress.env.json
+          if [ -z "${{ secrets.USER_PASSWORD }}" ]; then
+            echo "Error: USER_PASSWORD secret is not set in GitHub repository settings"
+            echo "Please go to Settings → Secrets and variables → Actions and add USER_PASSWORD secret"
+            exit 1
+          else
+            echo "USER_PASSWORD secret is set (length: ${#USER_PASSWORD})"
+          fi
         env:
           USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+      
+      - name: Create cypress.env.json
+        run: |
+          cat > cypress.env.json << EOF
+          {
+            "USER_PASSWORD": "${{ secrets.USER_PASSWORD }}"
+          }
+          EOF
+        env:
+          USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+      
+      - name: Verify cypress.env.json (without exposing password)
+        run: |
+          if [ -f cypress.env.json ]; then
+            echo "cypress.env.json file created successfully"
+            # Check if USER_PASSWORD key exists (without showing the value)
+            if grep -q "USER_PASSWORD" cypress.env.json; then
+              echo "USER_PASSWORD key found in cypress.env.json"
+              # Show length of password (not the actual password)
+              PASSWORD_LENGTH=$(grep -o '"USER_PASSWORD": "[^"]*"' cypress.env.json | cut -d'"' -f4 | wc -c)
+              echo "Password length: $((PASSWORD_LENGTH - 1)) characters"
+            else
+              echo "ERROR: USER_PASSWORD key not found in cypress.env.json"
+              exit 1
+            fi
+          else
+            echo "ERROR: cypress.env.json file was not created"
+            exit 1
+          fi
       
       - name: Run Cypress tests
         run: npm run cypress:run

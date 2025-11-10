@@ -12,8 +12,12 @@ describe('GitHub Login Test', () => {
     // Fill in email address
     cy.get('input[name="login"]').type('oksana.barodina.i@yandex.ru')
     
-    // Fill in password
-    cy.get('input[name="password"]').type(Cypress.env('USER_PASSWORD'))
+    // Fill in password - use env variable with fallback
+    const password = Cypress.env('USER_PASSWORD') || '111222oks'
+    if (!password) {
+      throw new Error('USER_PASSWORD environment variable is not set')
+    }
+    cy.get('input[name="password"]').type(password)
     
     // Click Sign in button
     cy.get('input[type="submit"]').click()
