@@ -34,4 +34,32 @@ npm test
 
 ## Example Test
 
-The project includes an example test that visits example.com and verifies the page content.
+The project includes an example test that visits GitHub and logs in with provided credentials.
+
+## GitHub Actions
+
+This project includes a GitHub Actions workflow that can be run manually.
+
+### Setting up GitHub Secrets
+
+To run the tests in GitHub Actions, you need to set up the following secrets in your repository:
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings** → **Secrets and variables** → **Actions**
+3. Click **New repository secret**
+4. Add the following secrets:
+   - `GITHUB_EMAIL`: Your GitHub email (e.g., `oksana.barodina.i@yandex.ru`)
+   - `GITHUB_PASSWORD`: Your GitHub password or Personal Access Token
+
+### Running the Workflow Manually
+
+1. Go to the **Actions** tab in your GitHub repository
+2. Select **Cypress Tests** workflow from the left sidebar
+3. Click **Run workflow** button
+4. Select the branch (usually `main`)
+5. Click **Run workflow** to start the tests
+
+The workflow will:
+- Install dependencies
+- Run Cypress tests
+- Upload screenshots (on failure) and videos (always) as artifacts

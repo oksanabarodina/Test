@@ -1,17 +1,31 @@
-describe('Example Test Suite', () => {
-  it('should visit example.com and verify page title', () => {
-    // Visit the example.com website
-    cy.visit('https://example.com')
+describe('GitHub Login Test', () => {
+  it('should open GitHub and login with provided credentials', () => {
+    // Visit GitHub homepage
+    cy.visit('https://github.com/')
     
-    // Verify the page title
-    cy.title().should('include', 'Example Domain')
+    // Click on Sign in button
+    cy.contains('Sign in').click()
     
-    // Verify the main heading exists
-    cy.get('h1').should('be.visible')
-    cy.get('h1').should('contain', 'Example Domain')
+    // Wait for login page to load
+    cy.url().should('include', '/login')
     
-    // Verify the paragraph text
-    cy.get('p').should('contain', 'This domain is for use in illustrative examples')
+    // Fill in email address
+    cy.get('input[name="login"]').type('oksana.barodina.i@yandex.ru')
+    
+    // Fill in password
+    cy.get('input[name="password"]').type(Cypress.env('USER_PASSWORD'))
+    
+    // Click Sign in button
+    cy.get('input[type="submit"]').click()
+    
+    // Verify successful login - check for user navigation menu or dashboard
+    cy.url().should('not.include', '/login')
+    
+    // Verify we're logged in by checking for user menu or dashboard elements
+    cy.get('button[aria-label*="Open user navigation menu"]', { timeout: 10000 }).should('be.visible')
+    
+    // Alternative verification - check for dashboard or user-specific elements
+    cy.get('body').should('not.contain', 'Sign in')
   })
 })
 
