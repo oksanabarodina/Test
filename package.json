@@ -1,17 +1,18 @@
 {
   "name": "browser-automation",
   "version": "1.0.0",
-  "description": "Browser automation with Playwright",
-  "main": "browser.js",
+  "description": "Browser automation with Cypress",
+  "main": "index.js",
   "scripts": {
-    "start": "node browser.js",
-    "test": "node browser.js"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test": "cypress run"
   },
-  "keywords": ["browser", "automation", "playwright"],
+  "keywords": ["browser", "automation", "cypress", "testing"],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "playwright": "^1.40.0"
+  "devDependencies": {
+    "cypress": "^13.7.0"
   }
 }
 
