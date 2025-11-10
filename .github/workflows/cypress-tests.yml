@@ -2,6 +2,12 @@ name: Cypress Tests
 
 on:
   workflow_dispatch:  # Allows manual trigger from GitHub Actions tab
+    inputs:
+      branch:
+        description: 'Branch to run tests on'
+        required: false
+        default: 'main'
+        type: string
 
 jobs:
   cypress-tests:
