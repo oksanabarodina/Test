@@ -23,13 +23,10 @@ jobs:
       - name: Create cypress.env.json
         run: |
           echo '{
-            "GITHUB_EMAIL": "${{ secrets.GITHUB_EMAIL }}",
-            "GITHUB_PASSWORD": "${{ secrets.GITHUB_PASSWORD }}",
-            "USER_PASSWORD": "${{ secrets.GITHUB_PASSWORD }}"
+            "USER_PASSWORD": "${{ secrets.USER_PASSWORD }}"
           }' > cypress.env.json
         env:
-          GITHUB_EMAIL: ${{ secrets.GITHUB_EMAIL }}
-          GITHUB_PASSWORD: ${{ secrets.GITHUB_PASSWORD }}
+          USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
       
       - name: Run Cypress tests
         run: npm run cypress:run

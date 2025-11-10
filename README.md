@@ -42,14 +42,15 @@ This project includes a GitHub Actions workflow that can be run manually.
 
 ### Setting up GitHub Secrets
 
-To run the tests in GitHub Actions, you need to set up the following secrets in your repository:
+To run the tests in GitHub Actions, you need to set up the following secret in your repository:
 
 1. Go to your repository on GitHub
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
 3. Click **New repository secret**
-4. Add the following secrets:
-   - `GITHUB_EMAIL`: Your GitHub email (e.g., `oksana.barodina.i@yandex.ru`)
-   - `GITHUB_PASSWORD`: Your GitHub password or Personal Access Token
+4. Add the following secret:
+   - `USER_PASSWORD`: Your GitHub password or Personal Access Token
+
+**Note:** The email is hardcoded in the test file and doesn't need to be set as a secret.
 
 ### Running the Workflow Manually
 
