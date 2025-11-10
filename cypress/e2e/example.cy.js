@@ -8,7 +8,7 @@ describe('GitHub Login Test', () => {
     
     // Wait for login page to load
     cy.url().should('include', '/login')
-    
+    cy.reload()
     // Fill in email address
     cy.get('input[name="login"]').type('oksana.barodina.i@yandex.ru')
     
