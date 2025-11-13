@@ -14,7 +14,7 @@ describe('Source Demo', () => {
     cy.get('.inventory_item_name').should('have.length', 10)
     cy.get('#remove-sauce-labs-backpack').click()  
     cy.get('#continue-shopping').click()
-    
+    // test
     // test
   })
 })
