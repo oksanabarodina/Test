@@ -1,0 +1,120 @@
+name: PR Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  cypress-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for git diff
+      
+      - name: Get changed test files
+        id: changed-files
+        run: |
+          # Get the base branch (usually main or master)
+          BASE_BRANCH="${{ github.base_ref }}"
+          # Get changed files that match test pattern
+          CHANGED_FILES=$(git diff --name-only origin/$BASE_BRANCH...HEAD | grep -E 'cypress/e2e/.*\.cy\.(js|jsx|ts|tsx)$' || true)
+          
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No test files changed in this PR"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "files=" >> $GITHUB_OUTPUT
+          else
+            echo "Changed test files:"
+            echo "$CHANGED_FILES"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            # Convert newlines to spaces
+            FILES_LIST=$(echo "$CHANGED_FILES" | tr '\n' ' ' | sed 's/ $//')
+            echo "files=$FILES_LIST" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Validate USER_PASSWORD secret
+        run: |
+          if [ -z "${{ secrets.USER_PASSWORD }}" ]; then
+            echo "Error: USER_PASSWORD secret is not set in GitHub repository settings"
+            echo "Please go to Settings → Secrets and variables → Actions and add USER_PASSWORD secret"
+            exit 1
+          else
+            echo "USER_PASSWORD secret is set (length: ${#USER_PASSWORD})"
+          fi
+        env:
+          USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+      
+      - name: Create cypress.env.json
+        run: |
+          cat > cypress.env.json << EOF
+          {
+            "USER_PASSWORD": "${{ secrets.USER_PASSWORD }}"
+          }
+          EOF
+        env:
+          USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+      
+      - name: Verify cypress.env.json (without exposing password)
+        run: |
+          if [ -f cypress.env.json ]; then
+            echo "cypress.env.json file created successfully"
+            # Check if USER_PASSWORD key exists (without showing the value)
+            if grep -q "USER_PASSWORD" cypress.env.json; then
+              echo "USER_PASSWORD key found in cypress.env.json"
+              # Show length of password (not the actual password)
+              PASSWORD_LENGTH=$(grep -o '"USER_PASSWORD": "[^"]*"' cypress.env.json | cut -d'"' -f4 | wc -c)
+              echo "Password length: $((PASSWORD_LENGTH - 1)) characters"
+            else
+              echo "ERROR: USER_PASSWORD key not found in cypress.env.json"
+              exit 1
+            fi
+          else
+            echo "ERROR: cypress.env.json file was not created"
+            exit 1
+          fi
+      
+      - name: Run Cypress tests on changed files
+        if: steps.changed-files.outputs.has_changes == 'true'
+        run: |
+          echo "Running tests for changed files: ${{ steps.changed-files.outputs.files }}"
+          for file in ${{ steps.changed-files.outputs.files }}; do
+            echo "Running test: $file"
+            npx cypress run --spec "$file"
+          done
+      
+      - name: Skip tests (no changes)
+        if: steps.changed-files.outputs.has_changes == 'false'
+        run: |
+          echo "No test files were changed in this PR. Skipping test execution."
+      
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          retention-days: 7
+      
+      - name: Upload Cypress videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          retention-days: 7
+
