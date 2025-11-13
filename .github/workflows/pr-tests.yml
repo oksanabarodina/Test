@@ -92,10 +92,17 @@ jobs:
         if: steps.changed-files.outputs.has_changes == 'true'
         run: |
           echo "Running tests for changed files: ${{ steps.changed-files.outputs.files }}"
+          EXIT_CODE=0
           for file in ${{ steps.changed-files.outputs.files }}; do
             echo "Running test: $file"
-            npx cypress run --spec "$file"
+            npx cypress run --spec "$file" || EXIT_CODE=1
           done
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "❌ Tests failed! Merge will be blocked."
+            exit 1
+          else
+            echo "✅ All tests passed!"
+          fi
       
       - name: Skip tests (no changes)
         if: steps.changed-files.outputs.has_changes == 'false'
