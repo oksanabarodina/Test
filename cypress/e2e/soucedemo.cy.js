@@ -10,5 +10,7 @@ describe('Source Demo', () => {
   it('should add a product to the cart', () => {
     cy.get('#add-to-cart-sauce-labs-backpack').click()
     cy.get('.shopping_cart_badge').should('have.text', '1')
+    cy.get('.shopping_cart_link').click()
+    cy.get('.inventory_item_name').should('have.length', 1)
   })
 })
