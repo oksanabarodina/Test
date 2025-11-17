@@ -20,4 +20,9 @@ describe('Source Demo', () => {
     cy.get('.shopping_cart_link').click()
   })
 
+  it('cart', () => {
+    cy.get('.shopping_cart_link').click() // каждый it не учитывает другие it кроме beforeEach !!!
+    cy.get('[data-test="continue-shopping"]').click()
+})
+
 })
