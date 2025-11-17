@@ -15,6 +15,9 @@ describe('Source Demo', () => {
     cy.get('#remove-sauce-labs-backpack').click()  
     cy.get('#continue-shopping').click()
   })
-
   
+  it('the cart', () => {
+    cy.get('.shopping_cart_link').click()
+  })
+
 })
