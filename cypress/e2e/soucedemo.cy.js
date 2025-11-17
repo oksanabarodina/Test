@@ -5,6 +5,7 @@ describe('Source Demo', () => {
     cy.get('#password').type(Cypress.env('USER_PASSWORD'))
     cy.get('#login-button').click()
     cy.get('.inventory_item_name').should('have.length', 6)
+    
   })
 
   it('should add a product to the cart', () => {
@@ -15,6 +16,14 @@ describe('Source Demo', () => {
     cy.get('#remove-sauce-labs-backpack').click()  
     cy.get('#continue-shopping').click()
   })
-
   
+  it('the cart', () => {
+    cy.get('.shopping_cart_link').click()
+  })
+
+  it('cart', () => {
+    cy.get('.shopping_cart_link').click() // каждый it не учитывает другие it кроме beforeEach !!!
+    cy.get('[data-test="continue-shopping"]').click()
+})
+
 })
